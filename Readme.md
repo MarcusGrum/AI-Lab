@@ -164,14 +164,14 @@ Again, we use 100% available space on the physical volume (100% from the partiti
 	lvcreate --type cache-pool -l 100%FREE -c 4M --cachemode writethrough -n lv_cache VG_storage /dev/nvme2n1
 	```
 
-Consider `writeback` if you focus on performance. 
-This mode delays writing data blocks from the cache back to the origin LV. 
-But this mode will increase performance, but the loss of a cache device can result in lost data. 
-Hence, this mode should only be used if the fast cache is realized as individual `RAID1`.
+	Consider `writeback` if you focus on performance. 
+	This mode delays writing data blocks from the cache back to the origin LV. 
+	But this mode will increase performance, but the loss of a cache device can result in lost data. 
+	Hence, this mode should only be used if the fast cache is realized as individual `RAID1`.
 
-Consider `writethrough` instead if you focus on security.
-This mode ensures that any data written will be stored both in the cache and on the origin LV. 
-The loss of a device associated with the cache in this case would not mean the loss of any data.
+	Consider `writethrough` instead if you focus on security.
+	This mode ensures that any data written will be stored both in the cache and on the origin LV. 
+	The loss of a device associated with the cache in this case would not mean the loss of any data.
 
 1. Convert the cache device – the slow device (logical volume `lv_slow`) 
 will have a cache device (logical volume `lv_cache`):
@@ -225,14 +225,14 @@ E.g., the entry looks like this:
 
 1. Activate `SLI` modus: 
 
-TBD?
+	TBD?
 
 ### Install further tools
 
 1. Install net-tools, so that you e.g. can run `ifconfig` to get to know your current IP address.
 
 	```
-	apt-install net-tools
+	apt install net-tools
 	```
 
 1. Install CLI gpu monitor:
@@ -336,19 +336,19 @@ Detailed steps can be found at https://docs.nvidia.com/datacenter/cloud-native/c
 	```
 
 1. Restart the Docker daemon to complete the installation after setting the default runtime:
-
+	
 	```
 	sudo systemctl restart docker
 	```
 
-At this point, a working setup can be tested by running a base CUDA container:
-
+	At this point, a working setup can be tested by running a base CUDA container:
+	
 	```
 	sudo docker run --rm --gpus all nvidia/cuda:11.0.3-base-ubuntu20.04 nvidia-smi
 	```
-
-This should result in a console output shown below:
-
+	
+	This should result in a console output shown below:
+	
 ```
 +-----------------------------------------------------------------------------+
 | NVIDIA-SMI 450.51.06    Driver Version: 450.51.06    CUDA Version: 11.0     |

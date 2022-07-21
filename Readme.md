@@ -11,11 +11,9 @@ as well as on `Ubuntu22.04` (using `ubuntu-22.04-server-amd64.iso`).
 ## Download and install newest Ubuntu
 
 1. Download the recent Ubuntu (server version) from
-
 ```https://ubuntu.com/download```
 
 1. Create a bootable USB stick with the help of Etcher. Detailed steps can be found at
-
 ```https://ubuntu.com/tutorials/create-a-usb-stick-on-macos#4-install-and-run-etcher```
 
 1. Install Ubuntu and follow Ubuntu installation instructions.
@@ -69,13 +67,14 @@ Only then, `RAID1` can be setup as required.
 	sudo apt-get update
 	sudo apt-get upgrade
 	sudo apt-get update
-
 ```
 
 1. Install latest ubuntu drivers, which includes `nvidia` driver, for correctly displaying GUI e.g.
 For instance, by this, gamma issue (super white filter at standard GUI) vanishes.
 
-`sudo ubuntu-drivers install`
+```
+	sudo ubuntu-drivers install
+```
 
 1. Install the desktop environment:
 
@@ -83,9 +82,7 @@ For instance, by this, gamma issue (super white filter at standard GUI) vanishes
 	sudo apt install ubuntu-desktop
 ``` 
 
-1. Install and set up a display manager to manage users and load up the desktop environment sessions.
-At installation process, select `GDM3` because it refers to the default display manager of GNOME.
-Alternatively, you can choose `LightDM`.
+1. Install and set up a display manager to manage users and load up the desktop environment sessions. At installation process, select `GDM3` because it refers to the default display manager of GNOME. Alternatively, you can choose `LightDM`.
 
 ```
 	sudo apt install lightdm

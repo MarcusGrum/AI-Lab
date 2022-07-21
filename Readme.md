@@ -394,9 +394,9 @@ Git tools suite for dealing with different kinds of repositories.
 1. Prepare joint repository storage:
 
 	```
-	mkdir /home/repositories
+	mkdir /home/$YourUserAccount$/repositories
 	
-	cd /home/repositories
+	cd /home/$YourUserAccount$/repositories
 	```
 
 1. Clone relevant repositories:

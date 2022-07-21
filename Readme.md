@@ -391,15 +391,15 @@ Git tools suite for dealing with different kinds of repositories.
 
 ### Install AILab repositories
 
-1. Prepare joint repository storage:
+1. Prepare joint repository at cached `RAID5` storage created before:
 
 	```
-	mkdir /home/$YourUserAccount$/repositories
+	mkdir /mnt/storage/repositories
 	
-	cd /home/$YourUserAccount$/repositories
+	cd /mnt/storage/repositories
 	```
 
-1. Clone relevant repositories:
+1. Clone relevant repositories, such as the following:
 
 	```
 	git clone https://github.com/MarcusGrum/AI-CPS.git

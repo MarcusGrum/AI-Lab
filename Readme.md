@@ -62,42 +62,48 @@ Only then, `RAID1` can be setup as required.
    - Create a partition for Ubuntu on the RAID device. You can use the remaining space if you want to. Format it as ext4 and mount it at /.
 
 1. After installation, update and upgrade your system
-```
+
+	```
 	sudo apt-get update
 	sudo apt-get upgrade
 	sudo apt-get update
-```
+	```
 
 1. Install latest ubuntu drivers, which includes `nvidia` driver, for correctly displaying GUI e.g.
 For instance, by this, gamma issue (super white filter at standard GUI) vanishes.
-```
+
+	```
 	sudo ubuntu-drivers install
-```
+	```
 
 1. Install the desktop environment:
-```
+
+	```
 	sudo apt install ubuntu-desktop
-``` 
+	``` 
 
 1. Install and set up a display manager to manage users and load up the desktop environment sessions. At installation process, select `GDM3` because it refers to the default display manager of GNOME. Alternatively, you can choose `LightDM`.
-```
+	```
 	sudo apt install lightdm
-``` 
+	``` 
 
 1. Run this command to start the LightDM service with systemctl:
-```
+
+	```
 	sudo systemctl start lightdm.service
-```
+	```
 
 1. Run this command to start the LightDM service using the service utility:
-```
+
+	```
 	sudo service ligthdm start
-```
+	```
 
 1. Reboot your system with the reboot
-```
+
+	```
 	sudo systemctl reboot -i
-```
+	```
 
 1. Login at desktop GUI and test GUI.
 
@@ -113,7 +119,8 @@ Further, set up a partition in the NVME SSD device to occupy only 91% of the spa
 to have a better SSD endurance and in many cases performance.
 
 1. Install lvm2 and enable the lvm2 service
-```
+
+	```
 	sudo su
 	parted /dev/sda
 	(parted) p
@@ -127,33 +134,35 @@ to have a better SSD endurance and in many cases performance.
 	parted /dev/nvme2n1
 	(parted) p
 	(parted) q
-```
+	```
 
 1. Add partitions to the LVM2 (as physical volumes):
-```
+
+	```
 	sudo pvcreate /dev/sda1 /dev/sdb1 /dev/sdc1 /dev/nvme2n1p1
-```
+	```
 
 1. Create the LVM Volume Group device. The four physical volumes must be in the same group.
-```
+
+	```
 	sudo vgcreate VG_storage /dev/sda1 /dev/sdb1 /dev/sdc1 /dev/nvme2n1p1
-```
+	```
 
 1. Create the RAID5 device using the three slow hard drive disks and their partitions 
 `/dev/sda1`, `/dev/sdb1` and `/dev/sdc1`. 
 We want to use all the available space on our slow disks in one logical storage device we use `100%FREE`. 
 The name of the logical device is `lv_slow` hinting it consists of slow disks.
 
-```
+	```
 	sudo lvcreate --type raid5 -l 100%FREE -I 512 -n lv_slow VG_storage /dev/sda1 /dev/sdb1 /dev/sdc1
-```
+	```
 
 1. Create the cache pool logical volume with the name `lv_cache` (to show it’s a fast SSD device). 
 Again, we use 100% available space on the physical volume (100% from the partition we’ve used).
 
-```
+	```
 	lvcreate --type cache-pool -l 100%FREE -c 4M --cachemode writethrough -n lv_cache VG_storage /dev/nvme2n1
-```
+	```
 
 Consider `writeback` if you focus on performance. 
 This mode delays writing data blocks from the cache back to the origin LV. 
@@ -167,34 +176,34 @@ The loss of a device associated with the cache in this case would not mean the l
 1. Convert the cache device – the slow device (logical volume `lv_slow`) 
 will have a cache device (logical volume `lv_cache`):
 
-```
+	```
 	lvconvert --type cache --cachemode writethrough --cachepool VG_storage/lv_cache VG_storage/lv_slow
-```
+	```
 
 1. Format and do not miss to include it in the /etc/fstab to mount it automatically on boot.
 
-```
+	```
 	mkfs.ext4 /dev/VG_storage/lv_slow
-```
+	```
 
 1. Get to know `UUID` of `lv_slow` by
 
-```
+	```
 	blkid |grep lv_slow
-```
+	```
 
 1. Add `UUID` of `lv_slow` to the `/etc/fstab`, so that it is mounted automatically on boot.
 E.g., the entry looks like this:
 
-```
+	```
 	UUID=cbf0e33c-8b89-4b7b-b7dd-1a9429db3987 /mnt/storag ext4 defaults,discard,noatime 1 3
-```
+	```
 
 1. You are ready to use this cached `RAID1` by mounting it:
 
-```
+	```
 	/mnt/storage
-```
+	```
 
 ## Set-Up Ubuntu AILab configuration
 
@@ -210,9 +219,9 @@ E.g., the entry looks like this:
 
 1. Test nvlink capabilities of graphic card `0`:
 
-```
+	```
 	nvidia-smi nvlink --capabilities -i 0
-```
+	```
 
 1. Activate `SLI` modus: 
 
@@ -222,15 +231,15 @@ TBD?
 
 1. Install net-tools, so that you e.g. can run `ifconfig` to get to know your current IP address.
 
-```
+	```
 	apt-install net-tools
-```
+	```
 
 1. Install CLI gpu monitor:
 
-```
+	```
 	sudo apt install nvtop
-```
+	```
 
 1. Test this monitoring tool by running it:
 
@@ -249,59 +258,59 @@ Before you install Docker Engine for the first time on a new host machine, you n
 
 1. Update the apt package index and install packages to allow apt to use a repository over HTTPS:
 
-```
- sudo apt-get update
-
- sudo apt-get install \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release
-```
+	```
+	sudo apt-get update
+	
+	sudo apt-get install \
+		ca-certificates \
+		curl \
+		gnupg \
+		lsb-release
+	```
 
 1. Add Docker’s official GPG key:
 
-```
- sudo mkdir -p /etc/apt/keyrings
-
- curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-```
+	```
+	sudo mkdir -p /etc/apt/keyrings
+	
+ 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+	```
 
 1. Use the following command to set up the repository:
 
-```
-     echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-```
+	```
+	echo \
+		"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+		$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+	```
 
 #### b) Install Docker Engine
 
 1. Update the apt package index, and install the latest version of Docker Engine, containerd, and Docker Compose, or go to the next step to install a specific version:
 
-```
- sudo apt-get update
-
- sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
-```
+	```
+	sudo apt-get update
+	
+	sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+	```
 
 1. Test docker engine installation:
 
-```
+	```
 	sudo docker run hello-world
-```
+	```
 
 1. Install docker-compose:
 
-```
+	```
 	sudo apt install docker-compose
-```
+	```
 
 1. Test docker-compose by showing its current version:
 
-```
+	```
 	docker-compose --version
-```
+	```
 
 ### Setting up NVIDIA Container Toolkit
 
@@ -310,33 +319,33 @@ Detailed steps can be found at https://docs.nvidia.com/datacenter/cloud-native/c
 
 1. Setup the package repository and the GPG key:
 
-```
-distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
-      && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
-      && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
-            sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
-            sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
-```
+	```
+	distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+		&& curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+		&& curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+			sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+			sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+	```
 
 1. Install the nvidia-docker2 package (and dependencies) after updating the package listing:
 
-```
-sudo apt-get update
-
-sudo apt-get install -y nvidia-docker2
-```
+	```
+	sudo apt-get update
+	
+	sudo apt-get install -y nvidia-docker2
+	```
 
 1. Restart the Docker daemon to complete the installation after setting the default runtime:
 
-```
-sudo systemctl restart docker
-```
+	```
+	sudo systemctl restart docker
+	```
 
 At this point, a working setup can be tested by running a base CUDA container:
 
-```
-sudo docker run --rm --gpus all nvidia/cuda:11.0.3-base-ubuntu20.04 nvidia-smi
-```
+	```
+	sudo docker run --rm --gpus all nvidia/cuda:11.0.3-base-ubuntu20.04 nvidia-smi
+	```
 
 This should result in a console output shown below:
 
@@ -368,30 +377,30 @@ Git tools suite for dealing with different kinds of repositories.
 
 1. Install git (detailed steps can be found at https://github.com/git-guides/install-git)
 
-```
+	```
 	sudo apt-get update
 
 	sudo apt-get install git-all
-```
+	```
 
 1. Test git installation by showing current git version:
 
-```
+	```
 	git --version
-```
+	```
 
 ### Install AILab repositories
 
 1. Prepare joint repository storage:
 
-```
+	```
 	mkdir /home/repositories
 	
 	cd /home/repositories
-```
+	```
 
 1. Clone relevant repositories:
 
-```
+	```
 	git clone https://github.com/MarcusGrum/AI-CPS.git
-```
+	```

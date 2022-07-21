@@ -19,30 +19,30 @@ as well as on `Ubuntu22.04` (using `ubuntu-22.04-server-amd64.iso`).
 1. Install Ubuntu and follow Ubuntu installation instructions.
 Please consider the following decisions, here:
 
-* Computer name follows naming convention `AILabNode02`.
+	* Computer name follows naming convention `AILabNode02`.
 
-* OS is installed on SSDs on a `RAID1`. This consumes SSD1 and SSD2. 
-This can not be specified via BIOS before Ubuntu installation.
-This can not be specified via Ubuntu-desktop installation.
-This can not be specified after Ubuntu-desktop installation.
-This only can be specified via Ubuntu-server installation.
+	* OS is installed on SSDs on a `RAID1`. This consumes SSD1 and SSD2. 
+	This can not be specified via BIOS before Ubuntu installation.
+	This can not be specified via Ubuntu-desktop installation.
+	This can not be specified after Ubuntu-desktop installation.
+	This only can be specified via Ubuntu-server installation.
 
-* Data tank is on HDDs on a `RAID5`. This consumes HDD1, HDD2 and HDD3.
-This can not be specified via BIOS before Ubuntu installation.
-This can not be specified via Ubuntu-desktop installation.
-This can either be specified after Ubuntu-desktop installation, or
-this only can be specified via Ubuntu-server installation.
+	* Data tank is on HDDs on a `RAID5`. This consumes HDD1, HDD2 and HDD3.
+	This can not be specified via BIOS before Ubuntu installation.
+	This can not be specified via Ubuntu-desktop installation.
+	This can either be specified after Ubuntu-desktop installation, or
+	this only can be specified via Ubuntu-server installation.
 
-* A `softraid`on `btfs` is based on SSD3 being the `cache` and Data tank being the `data`.
-So, cached data is backed up at runtime when processing time is available.
-This is specified via OS after Ubuntu installation.
+	* A `softraid`on `btfs` is based on SSD3 being the `cache` and Data tank being the `data`.
+	So, cached data is backed up at runtime when processing time is available.
+	This is specified via OS after Ubuntu installation.
 
-* `RAID1` is based on three partitions. 
-First, 200MB for `EFI`.
-Second, `EXT4` being mounted at `/`.
-Third, `SWAP` partition having the size of RAM.
+	* `RAID1` is based on three partitions. 
+	First, 200MB for `EFI`.
+	Second, `EXT4` being mounted at `/`.
+	Third, `SWAP` partition having the size of RAM.
 
-* Use `LVM` with the new Ubuntu installation, so that you easily can deal with partitions, later.
+	* Use `LVM` with the new Ubuntu installation, so that you easily can deal with partitions, later.
 
 1. At Ubuntu server installation, setup partitions according to `https://alexskra.com/blog/ubuntu-20-04-with-software-raid1-and-uefi/`.
 Only then, `RAID1` can be setup as required.
@@ -62,7 +62,6 @@ Only then, `RAID1` can be setup as required.
    - Create a partition for Ubuntu on the RAID device. You can use the remaining space if you want to. Format it as ext4 and mount it at /.
 
 1. After installation, update and upgrade your system
-
 ```
 	sudo apt-get update
 	sudo apt-get upgrade
@@ -71,37 +70,31 @@ Only then, `RAID1` can be setup as required.
 
 1. Install latest ubuntu drivers, which includes `nvidia` driver, for correctly displaying GUI e.g.
 For instance, by this, gamma issue (super white filter at standard GUI) vanishes.
-
 ```
 	sudo ubuntu-drivers install
 ```
 
 1. Install the desktop environment:
-
 ```
 	sudo apt install ubuntu-desktop
 ``` 
 
 1. Install and set up a display manager to manage users and load up the desktop environment sessions. At installation process, select `GDM3` because it refers to the default display manager of GNOME. Alternatively, you can choose `LightDM`.
-
 ```
 	sudo apt install lightdm
 ``` 
 
 1. Run this command to start the LightDM service with systemctl:
-
 ```
 	sudo systemctl start lightdm.service
 ```
 
 1. Run this command to start the LightDM service using the service utility:
-
 ```
 	sudo service ligthdm start
 ```
 
 1. Reboot your system with the reboot
-
 ```
 	sudo systemctl reboot -i
 ```
@@ -120,7 +113,6 @@ Further, set up a partition in the NVME SSD device to occupy only 91% of the spa
 to have a better SSD endurance and in many cases performance.
 
 1. Install lvm2 and enable the lvm2 service
-
 ```
 	sudo su
 	parted /dev/sda
@@ -138,13 +130,11 @@ to have a better SSD endurance and in many cases performance.
 ```
 
 1. Add partitions to the LVM2 (as physical volumes):
-
 ```
 	sudo pvcreate /dev/sda1 /dev/sdb1 /dev/sdc1 /dev/nvme2n1p1
 ```
 
 1. Create the LVM Volume Group device. The four physical volumes must be in the same group.
-
 ```
 	sudo vgcreate VG_storage /dev/sda1 /dev/sdb1 /dev/sdc1 /dev/nvme2n1p1
 ```
@@ -214,9 +204,9 @@ E.g., the entry looks like this:
 
 1. Test nvlink of graphic card `0`:
 
-```
-   nvidia-smi nvlink --status -i 0
-```
+	```
+	nvidia-smi nvlink --status -i 0
+	```
 
 1. Test nvlink capabilities of graphic card `0`:
 

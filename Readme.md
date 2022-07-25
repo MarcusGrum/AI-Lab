@@ -34,7 +34,7 @@ you urgently need to realize these
 ```https://ubuntu.com/tutorials/create-a-usb-stick-on-macos#4-install-and-run-etcher```
 
 1. Install Ubuntu and follow Ubuntu installation instructions.
-Please consider the following decisions, here:
+Hence, during the installation process, please consider the following decisions:
 
 	* Computer name follows naming convention `AILabNode02`.
 
@@ -62,6 +62,10 @@ Please consider the following decisions, here:
 	* Use `LVM` with the new Ubuntu installation, so that you easily can deal with partitions, later.
 	
 	* Install `OpenSSH server`, to enable secure remote access to your server.
+
+	Hence, the raid configuration looks as follows:
+	
+	<img src="./documentation/RaidConfiguration.png" height="600" />
 
 1. At Ubuntu server installation, setup partitions according to `https://alexskra.com/blog/ubuntu-20-04-with-software-raid1-and-uefi/`.
 Only then, `RAID1` can be setup as required.
@@ -181,7 +185,7 @@ We want to use all the available space on our slow disks in one logical storage 
 The name of the logical device is `lv_slow` hinting it consists of slow disks.
 
 	```
-	sudo lvcreate --type raid5 -l 100%FREE -I 512 -n lv_slow VG_storage /dev/sda1 /dev/sdb1 /dev/sdc1
+	sudo lvcreate --type raid5 -I 512 -l 100%FREE -n lv_slow VG_storage /dev/sda1 /dev/sdb1 /dev/sdc1
 	```
 
 1. Create the cache pool logical volume with the name `lv_cache` (to show it’s a fast SSD device). 

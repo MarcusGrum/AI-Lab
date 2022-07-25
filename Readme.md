@@ -66,7 +66,23 @@ Hence, during the installation process, please consider the following decisions:
 	Hence, the raid configuration looks as follows:
 	
 	<img src="./documentation/RaidConfiguration.png" />
-
+	
+	Why are we doing this?
+	
+	Linux OS is mirrored on ultra-fast M2-SSDs, so that operations can be realized fast.
+	Since linux partitions are mirrored as `RAID1`, it is backed up efficiently.
+	Hence, one SSD failure can be captured.
+	Further, huge storage is provided by HDDs, which are backed up by `RAID5`.
+	Ultra-fast M2-SSD3 is considered as cache for huge storage raid, 
+	so that reading operations can be realized fast (in case `writethrough`)
+	and reading and writing operations can be realized fast (in case `writeback`).
+	Since reliability is prioritized, `writethrough` is preferred.
+	Here, 
+	(1) writing is realized based on HDD speed, 
+	(2) reading is realized in SSD speed,
+	(3) one SSD failure can be captured because of mirroring relevant data from `RAID1` and
+	(4) one HDD failure can be captured because of mirroring data in `RAID1`.
+	
 1. At Ubuntu server installation, setup partitions according to `https://alexskra.com/blog/ubuntu-20-04-with-software-raid1-and-uefi/`.
 Only then, `RAID1` can be setup as required.
 

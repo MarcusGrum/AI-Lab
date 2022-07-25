@@ -8,6 +8,23 @@ The lab configuration tool was originally developed by Dr.-Ing. Marcus Grum.
 This configuration has been tested on `Ubuntu-20.04` (using `ubuntu-20.04-server-amd64.iso`) 
 as well as on `Ubuntu22.04` (using `ubuntu-22.04-server-amd64.iso`).
 
+## Prepare your BIOS to detect all storage devices.
+
+If you use `ASUS` workstation motherboard called `Pro WS WRX80E-SAGE SE WIFI`,
+you urgently need to realize these
+
+1. Update to most current BIOS version.
+   Here, the easiest way is as follows:
+   Format an USB stick with `fat32` and
+
+1. Enable `BIOS SR-IOV` to activate single root IO virtualization support.
+   You can find it at menu `advanced/PCI subsystem settings/SR-IOV_Support`.
+   
+1. Enable `BIOS CSM` and enable all sub-features in `UEFI mode` (except `VGA/Graphic`).
+
+1. Test, if you can see all storage devices at BIOS.
+   If you can see all storage devices, such as `M2`, `SSDs`, `HDDs`, you are ready to go to install OS.
+
 ## Download and install newest Ubuntu
 
 1. Download the recent Ubuntu (server version) from
@@ -38,11 +55,13 @@ Please consider the following decisions, here:
 	This is specified via OS after Ubuntu installation.
 
 	* `RAID1` is based on three partitions. 
-	First, 200MB for `EFI`.
+	First, 200MB for `EFI` (or 1.000MB `Bios grub spacer`).
 	Second, `EXT4` being mounted at `/`.
 	Third, `SWAP` partition having the size of RAM.
 
 	* Use `LVM` with the new Ubuntu installation, so that you easily can deal with partitions, later.
+	
+	* Install `OpenSSH server`, to enable secure remote access to your server.
 
 1. At Ubuntu server installation, setup partitions according to `https://alexskra.com/blog/ubuntu-20-04-with-software-raid1-and-uefi/`.
 Only then, `RAID1` can be setup as required.
@@ -56,10 +75,12 @@ Only then, `RAID1` can be setup as required.
    - Create a software RAID(md) by selecting the two partitions you just created for the OS.
 
    - Congratulations, you now have a new RAID device. Let’s add at least one GPT partition to it.
-
-   - Optional: If you want the ability to swap, create a swap partition on the RAID device. Set the size to the same as your RAM, or half if you have 64 GB or more RAM.
-
-   - Create a partition for Ubuntu on the RAID device. You can use the remaining space if you want to. Format it as ext4 and mount it at /.
+     
+   - Create a partitions for Ubuntu on the RAID device.
+     Faced with our specification from above, we add two partitions: 
+     (a) `EXT4` being mounted at `/`.
+     (b) `SWAP` partition specified before because we want the ability to swap, create a swap partition on the RAID device. 
+     Typically, you will set the size to the same as your RAM, or half if you have 64 GB or more RAM.
 
 1. After installation, update and upgrade your system
 
@@ -82,7 +103,10 @@ For instance, by this, gamma issue (super white filter at standard GUI) vanishes
 	sudo apt install ubuntu-desktop
 	``` 
 
-1. Install and set up a display manager to manage users and load up the desktop environment sessions. At installation process, select `GDM3` because it refers to the default display manager of GNOME. Alternatively, you can choose `LightDM`.
+1. Install and set up a display manager to manage users and load up the desktop environment sessions. 
+   At installation process, select `GDM3` because it refers to the default display manager of GNOME. 
+   Alternatively, you can choose `LightDM`.
+
 	```
 	sudo apt install lightdm
 	``` 
@@ -96,7 +120,7 @@ For instance, by this, gamma issue (super white filter at standard GUI) vanishes
 1. Run this command to start the LightDM service using the service utility:
 
 	```
-	sudo service ligthdm start
+	sudo service lightdm start
 	```
 
 1. Reboot your system with the reboot
@@ -113,12 +137,15 @@ For instance, by this, gamma issue (super white filter at standard GUI) vanishes
 After Ubuntu installation, set up the `softraid` specified before.
 Detailled steps can be found at `https://ahelpme.com/linux/lvm/ssd-cache-device-to-a-software-raid5-using-lvm2/`.
 
+1. Install `geparted` for dealing with storage in a plug-n-play manner.
+
 1. Use `gparted` to create a partition manually on each `sda`.
 Consider `unformated` as file system, here.
 Further, set up a partition in the NVME SSD device to occupy only 91% of the space
 to have a better SSD endurance and in many cases performance.
 
-1. Install lvm2 and enable the lvm2 service
+1. Install lvm2 and enable the lvm2 service. 
+   But first, have a look on the individual storage devices and verify its partitions:
 
 	```
 	sudo su
@@ -161,7 +188,7 @@ The name of the logical device is `lv_slow` hinting it consists of slow disks.
 Again, we use 100% available space on the physical volume (100% from the partition we’ve used).
 
 	```
-	lvcreate --type cache-pool -l 100%FREE -c 4M --cachemode writethrough -n lv_cache VG_storage /dev/nvme2n1
+	lvcreate --type cache-pool -l 100%FREE -c 4M --cachemode writethrough -n lv_cache VG_storage /dev/nvme2n1p1
 	```
 
 	Consider `writeback` if you focus on performance. 
@@ -196,7 +223,7 @@ will have a cache device (logical volume `lv_cache`):
 E.g., the entry looks like this:
 
 	```
-	UUID=cbf0e33c-8b89-4b7b-b7dd-1a9429db3987 /mnt/storag ext4 defaults,discard,noatime 1 3
+	UUID=cbf0e33c-8b89-4b7b-b7dd-1a9429db3987 /mnt/storage ext4 defaults,discard,noatime 1 3
 	```
 
 1. You are ready to use this cached `RAID1` by mounting it:
@@ -232,7 +259,7 @@ E.g., the entry looks like this:
 1. Install net-tools, so that you e.g. can run `ifconfig` to get to know your current IP address.
 
 	```
-	apt install net-tools
+	sudo apt install net-tools
 	```
 
 1. Install CLI gpu monitor:
@@ -240,13 +267,21 @@ E.g., the entry looks like this:
 	```
 	sudo apt install nvtop
 	```
-
-1. Test this monitoring tool by running it:
-
-```
+	
+	Test this monitoring tool by running it:
+	
+	```
 	nvtop
-```
-
+	```
+	
+1. Install Internet browser called `firefox`:
+	
+	```
+	sudo apt install firefox
+	```
+	
+	Why don't you install `Tree Style Tab` add-on manually right now?
+	
 ### Install docker engine
 
 The docker engine suits to deal with programs over-the-air.

@@ -65,7 +65,7 @@ Hence, during the installation process, please consider the following decisions:
 
 	Hence, the raid configuration looks as follows:
 	
-	<img src="./documentation/RaidConfiguration.png" height="600" />
+	<img src="./documentation/RaidConfiguration.png" />
 
 1. At Ubuntu server installation, setup partitions according to `https://alexskra.com/blog/ubuntu-20-04-with-software-raid1-and-uefi/`.
 Only then, `RAID1` can be setup as required.

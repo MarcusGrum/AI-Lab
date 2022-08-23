@@ -334,7 +334,7 @@ E.g., the entry looks like this:
 The docker engine suits to deal with programs over-the-air.
 Detailed installation steps can be found at https://docs.docker.com/engine/install/ubuntu.
 
-#### a) Set up the repository
+#### a) Set up the package index to install docker
 
 Before you install Docker Engine for the first time on a new host machine, you need to set up the Docker repository. Afterward, you can install and update Docker from the repository.
 
@@ -411,7 +411,7 @@ The file should have at least this content:
 
 	```
 	{
-  		"data-root": "/mnt/storage/docker-data-root"
+  	   "data-root": "/mnt/storage/docker-data-root"
 	}
 	```
 
@@ -440,7 +440,7 @@ The file should have at least this content:
 
 	```
 	sudo rm -rf /var/lib/docker.old
-	``
+	```
 
 1. Test
 

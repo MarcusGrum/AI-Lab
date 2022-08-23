@@ -435,14 +435,14 @@ The file should have at least this content:
 	sudo service docker start
 	```
 
+1. Test
+
 	If everything is ok you should see no differences in using your docker containers. 
 	When you are sure that the new directory is being used correctly by docker daemon you can delete the old data directory.
 
 	```
 	sudo rm -rf /var/lib/docker.old
 	```
-
-1. Test
 
 ### Setting up NVIDIA Container Toolkit
 

@@ -1,7 +1,7 @@
-# Welcome to the AILab
+# Welcome to the AI-Lab Repository
 
 This repository supports the standardized node configuration, 
-so that laboratory components work in harmony.
+so that Artificial-Intelligence-(AI)-laboratory components work in harmony.
 
 The lab configuration tool was originally developed by Dr.-Ing. Marcus Grum.
 
@@ -302,6 +302,33 @@ E.g., the entry looks like this:
 	
 	Why don't you install `Tree Style Tab` add-on manually right now?
 	
+1. Install usefull libraries, such as numpy, matplotlib, etc.
+
+	```
+	pip3 install numpy
+	pip3 install matplotlib
+	```
+
+1. Install visual studio code as open-source editor:
+
+	Update package entries to install the editor first.
+
+	```
+	sudo apt-get install wget gpg
+	wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+	sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+	sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+	rm -f packages.microsoft.gpg
+	```
+
+	Then, install the editor.
+	
+	```
+	sudo apt install apt-transport-https
+	sudo apt update
+	sudo apt install code
+	```
+
 ### Install docker engine
 
 The docker engine suits to deal with programs over-the-air.
@@ -366,6 +393,56 @@ Before you install Docker Engine for the first time on a new host machine, you n
 	```
 	docker-compose --version
 	```
+
+#### c) Move docker's `data-root` to huge data storage
+
+If you intend to deal with docker volumes and expect huge data, 
+move docker data directory and you won’t risk any more to run out of space in your root partition.
+
+1. Stop the docker daemon:
+
+	```
+	sudo service docker stop
+	```
+
+1. Add a configuration file to tell the docker daemon what is the location of the data directory.
+Using your preferred text editor, add a file named `daemon.json` under the directory `/etc/docker`. 
+The file should have at least this content:
+
+	```
+	{
+  		"data-root": "/mnt/storage/docker-data-root"
+	}
+	```
+
+1. Copy the current data directory to the new one
+
+	```
+	sudo rsync -aP /var/lib/docker/ /mnt/storage/docker-data-root
+	```
+
+1. Rename the old docker directory
+
+	```
+	sudo mv /var/lib/docker /var/lib/docker.old
+	```
+	
+	This is just a sanity check to see that everything is ok and docker daemon will effectively use the new location for its data.
+
+1. Restart the docker daemon
+
+	```
+	sudo service docker start
+	```
+
+	If everything is ok you should see no differences in using your docker containers. 
+	When you are sure that the new directory is being used correctly by docker daemon you can delete the old data directory.
+
+	```
+	sudo rm -rf /var/lib/docker.old
+	``
+
+1. Test
 
 ### Setting up NVIDIA Container Toolkit
 

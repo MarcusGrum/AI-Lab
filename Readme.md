@@ -396,8 +396,9 @@ Before you install Docker Engine for the first time on a new host machine, you n
 
 #### c) Move docker's `data-root` to huge data storage
 
-If you intend to deal with docker volumes and expect huge data, 
+If you intend to deal with docker volumes and expect huge data (that exceeds  SSD memory), 
 move docker data directory and you won’t risk any more to run out of space in your root partition.
+Be aware, that this slows operation about a factor of 4.0!
 
 1. Stop the docker daemon:
 
@@ -428,6 +429,16 @@ The file should have at least this content:
 	```
 	
 	This is just a sanity check to see that everything is ok and docker daemon will effectively use the new location for its data.
+
+1. Create a symbolic link from old docker directory `/var/lib/docker` to new docker directory `/mnt/storage/docker-data-root`.
+So, old containers having `/var/lib/docker` paths configured in them can be restarted
+and everything works as before moving docker's `data-root` path.
+
+	```
+	sudo ln -s /mnt/storage/docker-data-root /var/lib/docker
+	```
+
+	Note, the destination folder comes as the first argument to the `ln`command.
 
 1. Restart the docker daemon
 
